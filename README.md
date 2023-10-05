@@ -1,2 +1,2 @@
 # david-LOGIST
-Davids Pygame-Zeug
+Davids Pygame-Zeug, nach http://programarcadegames.com/
