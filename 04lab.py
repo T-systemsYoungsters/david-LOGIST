@@ -1,5 +1,5 @@
 #David Vilhena Klein
-#04.10.2023
+#05.10.2023
 #Pygame Lab 4 auf http://programarcadegames.com
 #Kamelspiel mit E-Scooter statt Kamel
 import random
@@ -30,12 +30,12 @@ while done == False:
     match input().upper():
         case "1":
             print(random.choice(["Du machst dir einen coolen Song auf deinen Flexpods an.", "Dir fällt ein, dass du zu Hause deinen Herd angelassen hast.", "Du ballerst dir einen Kong-Strong-Energydrink rein.", "Du kramst aus deiner Hosentasche ein paar Fussel und einen komisch schmeckenden TikTak."]))
-            print("Du fährst jetzt schneller, doch die Polizei hat aufgeholt!")
+            print("Du kannst jetzt schneller als davor fahren, doch die Polizei hat aufgeholt!")
             bonus+=random.randint(3,7)
             meterPolizei+=random.randint(12,20)+polizeiBonus
         case "2":
             if scooterAkku >0:
-                meterRunde=random.randint(10,21)+bonus
+                meterRunde=random.randint(8,18)+bonus
                 meterGefahren+=meterRunde
                 print("Du hast", meterRunde, "Meter zurückgelegen.")
             else: 
@@ -47,27 +47,29 @@ while done == False:
                 print("Du hast", meterRunde, "Meter zurückgelegen.")
             meterPolizei+=random.randint(8,15)+polizeiBonus
             scooterHitze+=1
+            polizeiBonus+=1
         case "3":
             if scooterAkku>2:
                 print("Du startest richtig durch.")
                 print(random.choice(["Dabei überfährst du eine Katze.", "Dabei rempelst du drei Rentner an."]))
                 meterRunde=random.randint(20,35)+bonus
                 meterGefahren+=meterRunde
-                print("Du hast", meterRunde, "Meter zurückgelegen.")
+                print("Du hast", meterRunde, "Kilometer zurückgelegen.")
                 scooterAkku-=2
                 scooterHitze+=random.randint(1,3)
                 meterPolizei+=random.randint(8,15)+polizeiBonus
+                polizeiBonus+=1
             else:
                 print("Du hast nicht genug Akku, um schnell zu fahren.")
         case "4":
             print(random.choice(["Du gönnst deinem Scooter das Kabel deiner Powerbank. Das entheddern dauert aber so lange, dass die Polizei aufholt.", "Du stoppst an einer E-Ladesäule."]))
             scooterAkku=random.randint(2,4)
             print("Du konntest den Scooter auf", scooterAkku, "laden und er ist nicht mehr heiß.")
-            meterPolizei+=random.randint(8,15)+polizeiBonus
+            meterPolizei+=random.randint(5,12)+polizeiBonus
             scooterHitze=0
 
         case "5":
-            print("Du hast bereits {} Meter zurückgelegt.".format(meterGefahren))
+            print("Du hast bereits {} Kilometer zurückgelegt.".format(meterGefahren))
             random.choice(["Aber wieso fragst du überhaupt?", "Der Scooter machts inzwischen komische Geräusche.", "Du machst dir Sorgen wegen der Polizei."])
             print("Die Polizei ist", meterGefahren-meterPolizei, "km hinter dir!")
             print("Der Scooter ist {}/10 geladen.".format(scooterAkku))
@@ -76,24 +78,30 @@ while done == False:
         case __:
             print("Ungültige Eingabe.")
             input("Drücken Sie Enter um fortzufahren:")
-    if meterGefahren>=meterZumZiel: # Abbruchbedingung
+
+    # --- Events, die zufällig eingestreut werden ---
+    if random.randint(1,100)>95:
+        print("Heute scheint nicht dein Tag zu sein. Die Mutter vom kleinen Timmy heißt Karen. Die Polizei ist jetzt schneller als sonst.")
+        polizeiBonus+=3
+        scooterAkku+=random.randint(1,3)
+    if random.randint(1,100)<50:
+        print("Du hast beim Vorbeifahren ein Handy abgezogen. Damit konntest du dein Scooter ein bisschen laden.")
+        scooterAkku+=1
+    
+    # --- Bedingungen: Gewinnen, Verlieren oder Warnen
+    if meterGefahren>=meterZumZiel:
         done=True
         print("Du hast nach", runde, "Runden erfolgreich die Grenze nach Spandau überquert. Die Berliner Polizei kann im Ausland nichts mehr ausrichten. Du hast gewonnen!")
     elif meterPolizei >= meterGefahren:
         done=True
         print("Du wurdest nach ", runde, "Runden festgenommen. Du hast verloren.")
-    elif meterGefahren-meterPolizei < 10 :
+    elif meterGefahren-meterPolizei < 10 : #Polizei holt auf
         print("Du hörst die Sirenen der Polizei, wie sie aufholen. Du solltest dich beeilen!")
-    elif scooterHitze > 8:
+    elif scooterHitze > 8: #
         print("Dein Scooter ist explodiert. Du bist tot. Hättest du den Scooter mal nicht überhitzen lassen...")
         done=True
     elif scooterHitze > 4:
         print("Dein Scooter fühlt sich ganz schön heiß an.")
-    if random.randint(1,100)>80:
-        print("Heute scheint nicht dein Tag zu sein. Die Mutter vom kleinen Timmy heißt Karen. Die Polizei ist jetzt schneller als sonst.")
-        polizeiBonus+=8
-    if random.randint(1,100)<50:
-        print("Du hast beim Vorbeifahren ein Handy abgezogen. Damit konntest du dein Scooter ein bisschen laden.")
-        scooterAkku+=random.randint(1,3)
     runde+=1
+    
     
