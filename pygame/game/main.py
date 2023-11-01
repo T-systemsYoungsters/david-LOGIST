@@ -16,7 +16,8 @@ from player import Player
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 GREEN = (0, 255, 0)
-RED = (255, 0, 0)
+RED   = (255, 0, 0)
+BLUE  = (140, 221, 255)
  
  
 def main():
@@ -25,16 +26,16 @@ def main():
 
     # Set the width and height of the screen [width,height]
     # Set the height and width of the screen
-    screen_width = 700
-    screen_height = 400
+    screen_width = 1200
+    screen_height = 800
     screen = pygame.display.set_mode([screen_width, screen_height])
     pygame.display.set_caption("My Game")
 
     all_sprites_list = pygame.sprite.Group()
 
     #initiate the player
-    player=Player(20,20)
-    speed=5
+    player=Player(50,50, (screen_width, screen_height), 150)
+    speed=10
 
     
     
