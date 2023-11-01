@@ -128,7 +128,7 @@ def ruleCompliance(block, origin, destination):
     return possible
 
 # the amount of Disks can be increased up to 9. For additional disks, define them with a color in drawlist() and tweak the block height
-amountDisks = 3
+amountDisks = 5
 for i in range(amountDisks): #Put Disks into the first list before start
     A.append(amountDisks-i)
     goal.append(amountDisks-i)
@@ -149,7 +149,7 @@ while not done:
     # --- Game Logic
     
     if iterations>0: # Wait one iteration before execution
-        pygame.time.wait(1000) #Wait 1000 miliseconds. Be sure to lower the wait with higher amountDisks
+        pygame.time.wait(500) #Wait 1000 miliseconds. Be sure to lower the wait with higher amountDisks
         # Every uneven iteration, move Block 1 one List in moving direction
         if iterations % 2 != 0: 
             if A.count(1)==1: #check if Block 1 is in List A
