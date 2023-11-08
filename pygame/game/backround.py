@@ -26,16 +26,31 @@ class Backround(pygame.sprite.Sprite):
         self.change_x += x
         self.change_y += y
 
+    def resetspeed(self):
+        self.change_x=0
+        self.change_y=0
+
+    def check_corner(self):
+        corner = False
+        if self.rect.x < -self.x_border:
+            self.rect.x=-self.x_border
+            corner=True
+        if self.rect.x > 0:
+            self.rect.x=0      
+            corner=True     
+        if self.rect.y < -(self.y_border):
+            self.rect.y=-self.y_border
+            corner=True
+        if self.rect.y > (0):
+            self.rect.y=0
+            corner=True
+        return corner
+
     def update(self):
+        
         """ Find a new position for the backround"""
         self.rect.x += self.change_x
         self.rect.y += self.change_y
+        self.resetspeed()
 
-        if self.rect.x < -self.x_border:
-            self.rect.x=-self.x_border
-        if self.rect.x > 0:
-            self.rect.x=0           
-        if self.rect.y < -(self.y_border):
-            self.rect.y=-self.y_border
-        if self.rect.y > (0):
-            self.rect.y=0
+        self.check_corner()        

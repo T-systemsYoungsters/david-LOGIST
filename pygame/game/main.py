@@ -1,19 +1,19 @@
 """
 David Vilhena Klein
-03.11.2023
+08.11.2023
 
 Growing fish game. Inspiration: Tasty Blue on Steam.
 Final Lab on http://programarcadegames.com/
 
 Graphics from https://www.gamedeveloperstudio.com
 
-change: zwei down positionen für player
+Implement next time: enemy-movement and sound, start and pause window
 """
  
-import pygame
+import pygame, random
 from backround import Backround
 from player import Player
-
+from enemies import Enemy
  
 # Define some colors as global constants
 BLACK = (0, 0, 0)
@@ -31,10 +31,14 @@ def main():
     # Set the height and width of the screen
     SCREEN_WIDTH = 1200
     SCREEN_HEIGHT = 800
+    MAP_WIDTH = 2000
+    MAP_HEIGHT = 2000
     screen = pygame.display.set_mode([SCREEN_WIDTH,  SCREEN_HEIGHT])
-    pygame.display.set_caption("My Game")
+    pygame.display.set_caption("Gemischte Fischplatte")
 
     all_sprites_list = pygame.sprite.Group()
+    enemy_sprites_list = pygame.sprite.Group()
+    
 
     #initiate the player
     player_radius=150
@@ -42,8 +46,19 @@ def main():
     player=Player((SCREEN_WIDTH, SCREEN_HEIGHT), player_radius, player_size)
     speed=10
 
-    backround = Backround("assets/pool.jpeg",SCREEN_WIDTH,SCREEN_HEIGHT, 2000, 2000, player_radius)
+    #initiate the backround
+    backround = Backround("assets/pool.jpeg",SCREEN_WIDTH,SCREEN_HEIGHT, MAP_WIDTH, MAP_HEIGHT, player_radius)
+    
     all_sprites_list.add(backround)
+    
+    #initiate enemy to try
+    for i in range(1,random.randint(10,40)):
+        x= random.randrange(MAP_WIDTH)
+        y= random.randrange(MAP_HEIGHT)
+        enemy=Enemy(x,y,random.randrange(1,100))
+        enemy_sprites_list.add(enemy)
+        all_sprites_list.add(enemy)
+
     all_sprites_list.add(player)
     
 
@@ -78,11 +93,12 @@ def main():
                     player.change_y = 0
                 elif event.key == pygame.K_DOWN or event.key == pygame.K_s:
                     player.change_y = 0
-        player.update()
+        
         
         # ALL EVENT PROCESSING SHOULD GO ABOVE THIS COMMENT
  
         # ALL GAME LOGIC SHOULD GO BELOW THIS COMMENT
+
         '''limit movement to center'''#make border round
         if player.rect.x < (player.x-player.radius):
             player.rect.x=player.x-player.radius
@@ -96,16 +112,29 @@ def main():
         if player.rect.y > (player.y+player.radius):
             player.rect.y=player.y+player.radius
             backround.change_y=-speed
-        backround.update()
-        backround.change_x=0
-        backround.change_y=0
+        
+        for i in enemy_sprites_list:
+            i.rect.x = i.xpos + backround.rect.x
+            i.rect.y = i.ypos + backround.rect.y
+            player_hit = pygame.Rect.colliderect(player.rect, i.rect)
+            if player_hit and player.size < i.size:
+                print("Ouch")
+            elif player_hit and player.size > i.size:
+                all_sprites_list.remove(i)
+                enemy_sprites_list.remove(i)
+                player_size+=10
+                player.changesize(player_size)
+            
+            
+            
+        
+        
         # ALL GAME LOGIC SHOULD GO ABOVE THIS COMMENT
  
         # ALL CODE TO DRAW SHOULD GO BELOW THIS COMMENT
- 
         # First, clear the screen to white. Don't put other drawing commands
         # above this, or they will be erased with this command.
-        screen.fill(WHITE)
+        all_sprites_list.update()
         all_sprites_list.draw(screen)
         # ALL CODE TO DRAW SHOULD GO ABOVE THIS COMMENT
  
