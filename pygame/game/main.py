@@ -1,14 +1,17 @@
 """
 David Vilhena Klein
-01.11.2023
+03.11.2023
 
 Growing fish game. Inspiration: Tasty Blue on Steam.
 Final Lab on http://programarcadegames.com/
 
 Graphics from https://www.gamedeveloperstudio.com
+
+change: zwei down positionen für player
 """
  
 import pygame
+from backround import Backround
 from player import Player
 
  
@@ -26,20 +29,23 @@ def main():
 
     # Set the width and height of the screen [width,height]
     # Set the height and width of the screen
-    screen_width = 1200
-    screen_height = 800
-    screen = pygame.display.set_mode([screen_width, screen_height])
+    SCREEN_WIDTH = 1200
+    SCREEN_HEIGHT = 800
+    screen = pygame.display.set_mode([SCREEN_WIDTH,  SCREEN_HEIGHT])
     pygame.display.set_caption("My Game")
 
     all_sprites_list = pygame.sprite.Group()
 
     #initiate the player
-    player=Player(50,50, (screen_width, screen_height), 150)
+    player_radius=150
+    player_size=50
+    player=Player((SCREEN_WIDTH, SCREEN_HEIGHT), player_radius, player_size)
     speed=10
 
-    
-    
+    backround = Backround("assets/pool.jpeg",SCREEN_WIDTH,SCREEN_HEIGHT, 2000, 2000, player_radius)
+    all_sprites_list.add(backround)
     all_sprites_list.add(player)
+    
 
     # Used to manage how fast the screen updates
     clock = pygame.time.Clock()
@@ -60,6 +66,9 @@ def main():
                     player.change_y = -speed
                 elif event.key == pygame.K_DOWN or event.key == pygame.K_s:
                     player.change_y = speed
+                elif event.key == pygame.K_SPACE:
+                    player_size+=10
+                    player.changesize(player_size)
             elif event.type == pygame.KEYUP:
                 if event.key == pygame.K_LEFT or event.key == pygame.K_a:
                     player.change_x = 0
@@ -70,10 +79,26 @@ def main():
                 elif event.key == pygame.K_DOWN or event.key == pygame.K_s:
                     player.change_y = 0
         player.update()
+        
         # ALL EVENT PROCESSING SHOULD GO ABOVE THIS COMMENT
  
         # ALL GAME LOGIC SHOULD GO BELOW THIS COMMENT
- 
+        '''limit movement to center'''#make border round
+        if player.rect.x < (player.x-player.radius):
+            player.rect.x=player.x-player.radius
+            backround.change_x=speed
+        if player.rect.x > (player.x+player.radius):
+            player.rect.x=player.x+player.radius
+            backround.change_x=-speed
+        if player.rect.y < (player.y-player.radius):
+            player.rect.y=player.y-player.radius
+            backround.change_y=speed
+        if player.rect.y > (player.y+player.radius):
+            player.rect.y=player.y+player.radius
+            backround.change_y=-speed
+        backround.update()
+        backround.change_x=0
+        backround.change_y=0
         # ALL GAME LOGIC SHOULD GO ABOVE THIS COMMENT
  
         # ALL CODE TO DRAW SHOULD GO BELOW THIS COMMENT
@@ -81,7 +106,6 @@ def main():
         # First, clear the screen to white. Don't put other drawing commands
         # above this, or they will be erased with this command.
         screen.fill(WHITE)
-
         all_sprites_list.draw(screen)
         # ALL CODE TO DRAW SHOULD GO ABOVE THIS COMMENT
  
