@@ -1,4 +1,13 @@
 import pygame
+
+def draw_text(screen,text, size, col, x, y):
+        """Draw Text on the screen"""
+        font_name = pygame.font.match_font('arial')
+        font = pygame.font.Font(font_name, size)
+        text_surface = font.render(text, True, col)
+        text_rect = text_surface.get_rect()
+        text_rect.topleft = (x, y)
+        screen.blit(text_surface, text_rect)    
 class Backround(pygame.sprite.Sprite):
     def __init__(self, img, screen_width, screen_height, width, height, player_radius, x_pos=0, y_pos=0):
         """Constructor function"""
@@ -54,3 +63,4 @@ class Backround(pygame.sprite.Sprite):
         self.resetspeed()
 
         self.check_corner()        
+    

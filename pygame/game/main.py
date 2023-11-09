@@ -7,11 +7,11 @@ Final Lab on http://programarcadegames.com/
 
 Graphics from https://www.gamedeveloperstudio.com
 
-Implement next time: enemy-movement and sound, start and pause window
+Implement next time: enemy-movement and sound, start and pause window, score, penalty, json
 """
  
 import pygame, random
-from backround import Backround
+from backround import *
 from player import Player
 from enemies import Enemy
  
@@ -45,9 +45,11 @@ def main():
     player_size=50
     player=Player((SCREEN_WIDTH, SCREEN_HEIGHT), player_radius, player_size)
     speed=10
+    score=0
+    nom_sound = pygame.mixer.Sound("assets/nom.ogg")
 
     #initiate the backround
-    backround = Backround("assets/pool.jpeg",SCREEN_WIDTH,SCREEN_HEIGHT, MAP_WIDTH, MAP_HEIGHT, player_radius)
+    backround = Backround("assets/ocean.jpeg",SCREEN_WIDTH,SCREEN_HEIGHT, MAP_WIDTH, MAP_HEIGHT, player_radius)
     
     all_sprites_list.add(backround)
     
@@ -119,14 +121,18 @@ def main():
             player_hit = pygame.Rect.colliderect(player.rect, i.rect)
             if player_hit and player.size < i.size:
                 print("Ouch")
+                score-=500
+                print("Score :", score)
             elif player_hit and player.size > i.size:
                 all_sprites_list.remove(i)
                 enemy_sprites_list.remove(i)
                 player_size+=10
                 player.changesize(player_size)
-            
-            
-            
+                score+=100 + i.size[0]*2
+                print("Score :", score)
+                nom_sound.play()
+        
+        
         
         
         # ALL GAME LOGIC SHOULD GO ABOVE THIS COMMENT
@@ -136,6 +142,8 @@ def main():
         # above this, or they will be erased with this command.
         all_sprites_list.update()
         all_sprites_list.draw(screen)
+        draw_text(screen, "Score: "+str(score), 30, (0,0,0), 50, 50)
+            
         # ALL CODE TO DRAW SHOULD GO ABOVE THIS COMMENT
  
         # Go ahead and update the screen with what we've drawn.

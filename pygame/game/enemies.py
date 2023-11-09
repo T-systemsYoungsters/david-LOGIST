@@ -14,7 +14,8 @@ class Enemy(pygame.sprite.Sprite):
         self.size = (size, size)
         #Start in the middle of the screen
         self.image = pygame.Surface(self.size)
-        self.image.fill((180,0,0))
+        self.image = pygame.image.load("./assets/star.png")
+        self.image = pygame.transform.scale(self.image, self.size)
         # Make our top-left corner the passed-in location.
         self.rect = self.image.get_rect()
         self.rect.x = x
