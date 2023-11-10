@@ -70,6 +70,7 @@ class Player(pygame.sprite.Sprite):
         self.image_down= pygame.image.load("./assets/cartoon_fish_down.png")
         self.image_down= pygame.transform.scale(self.image_down, self.size)
         self.image.set_colorkey((0,255,0))
+        self.rect.size = self.size
         self.update()
 
     def changespeed(self, x, y):
