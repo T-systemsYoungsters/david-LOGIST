@@ -45,12 +45,22 @@ class Player(pygame.sprite.Sprite):
         self.rect.x = self.x
         self.rect.y = self.y
 
+        # initiate hitbox, for collision detection
+        # A deflated copy of the rect as the hitbox.
+        pos = self.rect.center
+        self.hitbox = self.rect.inflate(-self.size[0]/2,-self.size[0]/2,)
+        self.rect.center = pos
+
         # -- Attributes
         # Set speed vector
         self.change_x = 0
         self.change_y = 0
         
     def changesize(self,size):
+        # Change size parameter
+        # load and scale new movement images
+        # update rect and hitbox
+        # run self.update once so there is no black square
         self.size=(size,size)
         self.image=pygame.Surface(self.size)
         self.image_right= pygame.image.load("./assets/cartoon_fish_right.png")
@@ -117,3 +127,7 @@ class Player(pygame.sprite.Sprite):
         elif self.last_direction==(0,-1):
             self.image.blit(self.image_up, (0,0))
         
+        # update Hitbox
+        pos = self.rect.center
+        self.hitbox = self.rect.inflate(-self.size[0]/2,-self.size[0]/2,)
+        self.rect.center = pos
