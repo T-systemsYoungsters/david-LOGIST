@@ -51,24 +51,75 @@ class Window(pygame.sprite.Sprite):
         self.width = window_width
         self.height = window_height
         self.won=False
-        self.sound=False
+        self.new_highscore=False
+        self.sound=True
+        self.sfx=True
         self.sound_image=pygame.image.load("assets/sound.png")
         self.sound_image=pygame.transform.scale(self.sound_image, (50,50))
         #Put window in the middle of the screen
         self.image = pygame.Surface((self.width, self.height))
+        pygame.rect = self.image.get_rect()
 
     def update(self, score):
+        # overdraw window
+        # draw border line
         self.image.fill((230,230,255))
-        pygame.rect = self.image.get_rect()
         pygame.draw.rect(self.image, (30,30,30),(5,5,self.width-10, self.height-10), 3)
+
+        # draw sound icon
+        # draw square around sound icon
+        # draw red line if sound == False
         self.image.blit(self.sound_image, (35, self.height-85))
         pygame.draw.rect(self.image, (200,200,200),(30, self.height-90, 60,60), 5)
         if self.sound==False:
             pygame.draw.line(self.image, (200,0,0), (35, self.height-35), (85, self.height-85),7)
+
+        # draw sfx icon
+        # draw square around sound icon
+        # draw red line if sfx == False
+        draw_text(self.image, "SFX", 30, (0,0,0), self.width-85, self.height-80)
+        pygame.draw.rect(self.image, (200,200,200),(self.width-90, self.height-90, 60,60), 5)
+        if self.sfx==False:
+            pygame.draw.line(self.image, (200,0,0), (self.width-85, self.height-35), (self.width-35, self.height-85),7)
+        
+        
+
         if self.won == True:
             draw_text(self.image, "YOU WON!", 50, (80,80,150), 100,20)
             pygame.draw.line(self.image, (80,80,150), (100,80), (320,80),4)
             draw_text(self.image, "Score: "+str(score), 30, (80,80,150), 20,100)
+
+            # Show current Highscore or New Highscore! message
+            if check_highscore(score) == True:
+                self.new_highscore = True
+            if self.new_highscore == True:
+                draw_text(self.image, "NEW HIGHSCORE!", 30, (80,80,150), 20,150)
+            else:
+                file = open("highscore.txt","r")
+                highscore= file.read()
+                draw_text(self.image, "Highscore: " + str(highscore), 30, (80,80,150), 20,130)
         else:
             draw_text(self.image, "PAUSE", 50, (80,80,150), 130,20)
             pygame.draw.line(self.image, (80,80,150), (120,80), (280,80),4)
+
+            # Draw Resume Button
+            draw_text(self.image, "RESUME", 50, (80,80,180), 110, 150)
+            pygame.draw.rect(self.image, (200,200,200),(100, 150, 200,60), 5)
+
+
+def check_highscore(score):
+    #function that updates the highscore in highscore.txt
+    # return True if new Highscore was set 
+    new_highscore = False
+    file = open("highscore.txt","r")
+    old_highscore= int(file.read())
+
+    if score > old_highscore:
+        file=open("highscore.txt","w")
+        newText=str(score)
+        file.write(newText)
+        file.close()
+        new_highscore = True
+        print("New Highscore!")
+
+    return new_highscore

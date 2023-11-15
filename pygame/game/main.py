@@ -8,7 +8,7 @@ Final Lab on http://programarcadegames.com/
 Graphics from https://www.gamedeveloperstudio.com
 
 Implement next time: zweite runde, json, player radius,können sich untereinander fressen,
- no radius at map border, endless mode, smaller Hitbox
+ no radius at map border, endless mode
 """
  
 import pygame, random
@@ -59,7 +59,9 @@ def main():
     killstreak_text_cooldown=0
     # For Killstreak, random.choice out of following options:
     streaklist=["Munch Munch", "Pop", "sizzle", "crunch", "slurp", "munch", "gulp", "rustle"]
-    sound=True # if True, the game starts with sound enabled
+    sound=True # if True, the game starts with sound enabled, 
+    sfx=True
+    # be sure to change attributes in Window class as well!
     
     burp_sound = pygame.mixer.Sound("assets/burp.ogg")
     nom_sound = pygame.mixer.Sound("assets/nom.ogg")
@@ -246,9 +248,11 @@ def main():
         all_sprites_list.draw(screen)
         draw_text(screen, "Score: "+str(score), 30, (0,0,0), 50, 50)
 
-        # Draw text on screen if killstreak
+        # Draw fancy effect text on screen if killstreak
+        # disable with sfx = False
         if killstreak_text_cooldown > 0:
-            draw_text(screen, current_streak, 60, (random.randint(0,255),random.randint(0,255),random.randint(0,255)), player.x+random.randint(0,player.size[0]), player.y+random.randint(0,player.size[0]))
+            if sfx == True:
+                draw_text(screen, current_streak, 60, (random.randint(0,255),random.randint(0,255),random.randint(0,255)), player.x+random.randint(0,player.size[0]), player.y+random.randint(0,player.size[0]))
             killstreak_text_cooldown-=1
 
         if cooldown_hurt != 0:
@@ -278,8 +282,14 @@ def main():
                     if event.key == pygame.K_ESCAPE:
                     # Show pause Window when ESC
                         show_window = False
+                #----------Event Handling inside Pause Window ------------
                 elif event.type == pygame.MOUSEBUTTONDOWN:
+                    if pygame.mouse.get_pos()[0] > window_xpos+100 and pygame.mouse.get_pos()[0] < window_xpos+300:
+                    # RESUME
+                        if pygame.mouse.get_pos()[1] > window_ypos+150 and pygame.mouse.get_pos()[1] < window_ypos+210:
+                            show_window = False
                     if pygame.mouse.get_pos()[0] > window_xpos+30 and pygame.mouse.get_pos()[0] < window_xpos+90:
+                    # Sound Control   
                         if pygame.mouse.get_pos()[1] > window_ypos+menu_window.height-90 and pygame.mouse.get_pos()[1] < window_ypos+menu_window.height-30:
                             if menu_window.sound == True:
                                 menu_window.sound=False
@@ -291,6 +301,19 @@ def main():
                                 sound=True
                                 print("Sound ON")
                                 menu_window.update(score)
+                    if pygame.mouse.get_pos()[0] > window_xpos+315 and pygame.mouse.get_pos()[0] < window_xpos+370:
+                    # SFX Control
+                        if pygame.mouse.get_pos()[1] > window_ypos+menu_window.height-90 and pygame.mouse.get_pos()[1] < window_ypos+menu_window.height-30:
+                            if menu_window.sfx == True:
+                                menu_window.sfx=False
+                                sfx=False
+                                print("Special Effects OFF")
+                                menu_window.update(score)
+                            elif menu_window.sfx == False:
+                                menu_window.sfx=True
+                                sfx=True
+                                print("Special Effects ON")
+                                menu_window.update(score)   
             pygame.display.flip()
         """----------------------------------------------"""
  
