@@ -8,7 +8,7 @@ Final Lab on http://programarcadegames.com/
 Graphics from https://www.gamedeveloperstudio.com
 
 Implement next time: zweite runde, json, player radius,können sich untereinander fressen,
- no radius at map border, endless mode
+ no radius at map border, endless mode, show_window as seperate function
 """
  
 import pygame, random
@@ -205,6 +205,8 @@ def main():
                     i.xpos = random.randrange(1,MAP_WIDTH-200)
 
             #---------------collision detection----------------
+            # see if hitbox.rect and sprite.rect are overlapping
+            # process hit for player smaller and bigger then sprite
             player_hit = pygame.Rect.colliderect(player.hitbox, i.rect)
             if player_hit and player.size < i.size and cooldown_hurt == 0:
                 cooldown_hurt=60
@@ -220,30 +222,28 @@ def main():
                 enemy_sprites_list.remove(i)
                 player_size+=5
                 player.changesize(player_size)
-                
+
+                # bonus score for Killstreak
                 if numberofenemies == 0 or cooldown_killstreak > 0:
                     score+=100 + i.size[0]*6
-                    if sound == True:
+                    if sound == True: #Sound Setting
                         burp_sound.play()
-                    killstreak_text_cooldown=60
+                    killstreak_text_cooldown=60 #cooldown 1 second
+                # normal kill
                 else:
                     score+=100 + i.size[0]*4
                     if sound == True:
                         nom_sound.play()
-                    cooldown_killstreak = 60
+                    cooldown_killstreak = 60 #cooldown 1 second
                     current_streak=random.choice(streaklist)
-                    
-            
         
-            
-        
-        
-        
-        # ALL GAME LOGIC SHOULD GO ABOVE THIS COMMENT
- 
-        # ALL CODE TO DRAW SHOULD GO BELOW THIS COMMENT
-        # First, clear the screen to white. Don't put other drawing commands
-        # above this, or they will be erased with this command.
+        # END of GAME LOGIC ----------------------------------------------
+
+        # Start of DRAW on SCREEN -------------------------------
+        # move all sprites
+        # Draw all sprites on screen in order of Sprite.Group(), Backround first
+        # They're not shown until screen.flip()
+        # Draw Score Text above enemies
         all_sprites_list.update()
         all_sprites_list.draw(screen)
         draw_text(screen, "Score: "+str(score), 30, (0,0,0), 50, 50)
@@ -262,19 +262,27 @@ def main():
         if speed != speed_original:
             speed = speed_original
             
-        # ALL CODE TO DRAW SHOULD GO ABOVE THIS COMMENT
+        # END of DRAW on SCREEN ---------------------
 
-        # Game Over
+        # START of GAME LOGIC #2 ---------------------------------------
+        # the pause window has to be drawn AFTER the rest so it is on top
+
+        # show Window when End of Game is reached
         if numberofenemies == 0:
             if sound == True:
                 game_won_sound.play(score)
             show_window=True
             menu_window.won=True
 
-        """Pause function------------------------------"""
+        """START of PAUSE loop---------------------------------------"""
+        # This way, the game stays frozen
         while show_window == True:
+            #update Window
+            #merge window with main screen
             menu_window.update(score)
             screen.blit(menu_window.image,(window_xpos, window_ypos))
+
+            # START of EVENT HANDLING inside PAUSE window ---------------
             for event in pygame.event.get(): 
                 if event.type == pygame.QUIT: 
                     pygame.quit()
@@ -282,12 +290,16 @@ def main():
                     if event.key == pygame.K_ESCAPE:
                     # Show pause Window when ESC
                         show_window = False
-                #----------Event Handling inside Pause Window ------------
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     if pygame.mouse.get_pos()[0] > window_xpos+100 and pygame.mouse.get_pos()[0] < window_xpos+300:
-                    # RESUME
+                    # RESUME or RESTART
                         if pygame.mouse.get_pos()[1] > window_ypos+150 and pygame.mouse.get_pos()[1] < window_ypos+210:
-                            show_window = False
+                            if menu_window.won == False:
+                                show_window = False #Resume
+                        if pygame.mouse.get_pos()[1] > window_ypos+320 and pygame.mouse.get_pos()[1] < window_ypos+380:
+                            if menu_window.won == True:
+                                pygame.quit()
+                                main()
                     if pygame.mouse.get_pos()[0] > window_xpos+30 and pygame.mouse.get_pos()[0] < window_xpos+90:
                     # Sound Control   
                         if pygame.mouse.get_pos()[1] > window_ypos+menu_window.height-90 and pygame.mouse.get_pos()[1] < window_ypos+menu_window.height-30:
@@ -313,21 +325,21 @@ def main():
                                 menu_window.sfx=True
                                 sfx=True
                                 print("Special Effects ON")
-                                menu_window.update(score)   
+                                menu_window.update(score) 
+            #Show (changes of) pause window on screen 
             pygame.display.flip()
-        """----------------------------------------------"""
+        """END of PAUSE loop ---------------------------------------------"""
  
-        # Go ahead and update the screen with what we've drawn.
+        # Show drawn objects on main screen
         pygame.display.flip()
  
         # Limit to 60 frames per second
         clock.tick(60)
     
-    # Close the window and quit.
-    # If you forget this line, the program will 'hang'
-    # on exit if running from IDLE.
+    # Close the window and quit IDE friendly
     pygame.quit()
     print("goodbye.")
- 
+
+# Run main loop if Program is run
 if __name__ == "__main__":
     main()

@@ -89,6 +89,10 @@ class Window(pygame.sprite.Sprite):
             pygame.draw.line(self.image, (80,80,150), (100,80), (320,80),4)
             draw_text(self.image, "Score: "+str(score), 30, (80,80,150), 20,100)
 
+            # Draw Restart Button
+            draw_text(self.image, "RESTART", 50, (80,80,180), 110, 320)
+            pygame.draw.rect(self.image, (200,200,200),(100, 320, 200,60), 5)
+
             # Show current Highscore or New Highscore! message
             if check_highscore(score) == True:
                 self.new_highscore = True
