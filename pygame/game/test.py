@@ -1,3 +1,4 @@
+#This file is for troubleshooting only
 
 def highscore(score):
     #function that updates the highscore in highscore.txt

@@ -42,6 +42,22 @@ def game_intro(screen):
     draw_text(screen, "Loading...", 50, (50,50,150), screen.get_size()[0]/2, screen.get_size()[1]*3/4)
     pygame.display.flip()
 
+def check_highscore(score):
+    #function that updates the highscore in highscore.txt
+    # return True if new Highscore was set 
+    new_highscore = False
+    file = open("highscore.txt","r")
+    old_highscore= int(file.read())
+
+    if score > old_highscore:
+        file=open("highscore.txt","w")
+        newText=str(score)
+        file.write(newText)
+        file.close()
+        new_highscore = True
+        print("New Highscore!")
+
+    return new_highscore
 
 class Window(pygame.sprite.Sprite):
     def __init__(self, window_width = 400, window_height = 400):
@@ -111,19 +127,3 @@ class Window(pygame.sprite.Sprite):
             pygame.draw.rect(self.image, (200,200,200),(100, 150, 200,60), 5)
 
 
-def check_highscore(score):
-    #function that updates the highscore in highscore.txt
-    # return True if new Highscore was set 
-    new_highscore = False
-    file = open("highscore.txt","r")
-    old_highscore= int(file.read())
-
-    if score > old_highscore:
-        file=open("highscore.txt","w")
-        newText=str(score)
-        file.write(newText)
-        file.close()
-        new_highscore = True
-        print("New Highscore!")
-
-    return new_highscore

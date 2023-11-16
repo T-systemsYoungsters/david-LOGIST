@@ -58,7 +58,8 @@ class Player(pygame.sprite.Sprite):
         
     def changesize(self,size):
         # Change size parameter
-        # load and scale new movement images
+        # load images again for no quality loss
+        # scale new movement images
         # update rect and hitbox
         # run self.update once so there is no black square
         self.size=(size,size)
@@ -88,6 +89,7 @@ class Player(pygame.sprite.Sprite):
         self.change_y += y
 
     def change_movement_image(self):
+        #change Image depending on moving direction
         if self.change_x < 0 and self.change_y < 0:
             self.last_direction=(-1,-1)
         elif self.change_x > 0 and self.change_y < 0:

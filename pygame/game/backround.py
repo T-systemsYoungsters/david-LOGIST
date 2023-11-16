@@ -56,7 +56,6 @@ class Backround(pygame.sprite.Sprite):
         return corner
 
     def update(self):
-        
         """ Find a new position for the backround"""
         self.rect.x += self.change_x
         self.rect.y += self.change_y

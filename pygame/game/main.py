@@ -7,8 +7,8 @@ Final Lab on http://programarcadegames.com/
 
 Graphics from https://www.gamedeveloperstudio.com
 
-Implement next time: zweite runde, json, player radius,können sich untereinander fressen,
- no radius at map border, endless mode, show_window as seperate function
+Implement next time:  player radius,können sich untereinander fressen,
+ no radius at map border, show_window as seperate function, put Window in sprite.Group()
 """
  
 import pygame, random
