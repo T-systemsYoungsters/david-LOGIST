@@ -277,56 +277,17 @@ def main():
         """START of PAUSE loop---------------------------------------"""
         # This way, the game stays frozen
         while show_window == True:
-            #update Window
-            #merge window with main screen
-            menu_window.update(score)
+            menu_window.pause(window_xpos, window_ypos, score)
             screen.blit(menu_window.image,(window_xpos, window_ypos))
-
-            # START of EVENT HANDLING inside PAUSE window ---------------
-            for event in pygame.event.get(): 
-                if event.type == pygame.QUIT: 
-                    pygame.quit()
-                elif event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_ESCAPE:
-                    # Show pause Window when ESC
-                        show_window = False
-                elif event.type == pygame.MOUSEBUTTONDOWN:
-                    if pygame.mouse.get_pos()[0] > window_xpos+100 and pygame.mouse.get_pos()[0] < window_xpos+300:
-                    # RESUME or RESTART
-                        if pygame.mouse.get_pos()[1] > window_ypos+150 and pygame.mouse.get_pos()[1] < window_ypos+210:
-                            if menu_window.won == False:
-                                show_window = False #Resume
-                        if pygame.mouse.get_pos()[1] > window_ypos+320 and pygame.mouse.get_pos()[1] < window_ypos+380:
-                            if menu_window.won == True:
-                                pygame.quit()
-                                main()
-                    if pygame.mouse.get_pos()[0] > window_xpos+30 and pygame.mouse.get_pos()[0] < window_xpos+90:
-                    # Sound Control   
-                        if pygame.mouse.get_pos()[1] > window_ypos+menu_window.height-90 and pygame.mouse.get_pos()[1] < window_ypos+menu_window.height-30:
-                            if menu_window.sound == True:
-                                menu_window.sound=False
-                                sound=False
-                                print("Sound OFF")
-                                menu_window.update(score)
-                            elif menu_window.sound == False:
-                                menu_window.sound=True
-                                sound=True
-                                print("Sound ON")
-                                menu_window.update(score)
-                    if pygame.mouse.get_pos()[0] > window_xpos+315 and pygame.mouse.get_pos()[0] < window_xpos+370:
-                    # SFX Control
-                        if pygame.mouse.get_pos()[1] > window_ypos+menu_window.height-90 and pygame.mouse.get_pos()[1] < window_ypos+menu_window.height-30:
-                            if menu_window.sfx == True:
-                                menu_window.sfx=False
-                                sfx=False
-                                print("Special Effects OFF")
-                                menu_window.update(score)
-                            elif menu_window.sfx == False:
-                                menu_window.sfx=True
-                                sfx=True
-                                print("Special Effects ON")
-                                menu_window.update(score) 
             #Show (changes of) pause window on screen 
+            sound = menu_window.sound
+            sfx = menu_window.sfx
+            show_window = menu_window.ispaused
+            if menu_window.restart==True:
+                print("Restart")
+                pygame.quit()
+                main()
+                break
             pygame.display.flip()
         """END of PAUSE loop ---------------------------------------------"""
  

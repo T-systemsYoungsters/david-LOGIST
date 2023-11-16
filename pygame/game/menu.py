@@ -1,5 +1,6 @@
 import pygame
 from backround import * #for drawtext function
+import main #for restarting option
 
 def instructions():
     print('''
@@ -70,6 +71,8 @@ class Window(pygame.sprite.Sprite):
         self.new_highscore=False
         self.sound=True
         self.sfx=True
+        self.ispaused=False
+        self.restart=False
         self.sound_image=pygame.image.load("assets/sound.png")
         self.sound_image=pygame.transform.scale(self.sound_image, (50,50))
         #Put window in the middle of the screen
@@ -126,4 +129,46 @@ class Window(pygame.sprite.Sprite):
             draw_text(self.image, "RESUME", 50, (80,80,180), 110, 150)
             pygame.draw.rect(self.image, (200,200,200),(100, 150, 200,60), 5)
 
-
+    def pause(self, window_xpos, window_ypos, score):
+        self.ispaused= True
+        self.update(score)
+        # START of EVENT HANDLING inside PAUSE window ---------------
+        pygame.init()
+        for event in pygame.event.get(): 
+            if event.type == pygame.QUIT: 
+                pygame.quit()
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                # Show pause Window when ESC
+                    self.ispaused = False
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if pygame.mouse.get_pos()[0] > window_xpos+100 and pygame.mouse.get_pos()[0] < window_xpos+300:
+                # RESUME or RESTART
+                    if pygame.mouse.get_pos()[1] > window_ypos+150 and pygame.mouse.get_pos()[1] < window_ypos+210:
+                        if self.won == False:
+                            self.ispaused = False #Resume
+                    if pygame.mouse.get_pos()[1] > window_ypos+320 and pygame.mouse.get_pos()[1] < window_ypos+380:
+                        if self.won == True:
+                            self.restart=True
+                elif pygame.mouse.get_pos()[0] > window_xpos+30 and pygame.mouse.get_pos()[0] < window_xpos+90:
+                # Sound Control   
+                    if pygame.mouse.get_pos()[1] > window_ypos+self.height-90 and pygame.mouse.get_pos()[1] < window_ypos+self.height-30:
+                        if self.sound == True:
+                            self.sound=False
+                            print("Sound OFF")
+                            self.update(score)
+                        elif self.sound == False:
+                            self.sound=True
+                            print("Sound ON")
+                            self.update(score)
+                elif pygame.mouse.get_pos()[0] > window_xpos+315 and pygame.mouse.get_pos()[0] < window_xpos+370:
+                # SFX Control
+                    if pygame.mouse.get_pos()[1] > window_ypos+self.height-90 and pygame.mouse.get_pos()[1] < window_ypos+self.height-30:
+                        if self.sfx == True:
+                            self.sfx=False
+                            print("Special Effects OFF")
+                            self.update(score)
+                        elif self.sfx == False:
+                            self.sfx=True
+                            print("Special Effects ON")
+                            self.update(score) 
