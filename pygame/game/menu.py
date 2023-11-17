@@ -21,11 +21,20 @@ def youwon(score):
 
 """.format(score))
 
-def game_intro(screen):
-
+def game_intro(screen, skip=False):
+    '''Game Intro'''
+    # ask for User input (SPACE) before start
+    # skip prompt if game was restarted
+    skip_intro=skip
     intro = True
 
-    while intro:
+    screen.fill((255,255,255))
+    text_size=115
+    draw_text(screen, "Fischsuppe", text_size, (50,50,150), screen.get_size()[0]/4+40, screen.get_size()[1]/3)
+    draw_text(screen, "hit SPACE to play", 50, (50,50,150), screen.get_size()[0]/3+80, screen.get_size()[1]/2)
+    pygame.display.flip()
+
+    while intro and not skip_intro:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -33,12 +42,6 @@ def game_intro(screen):
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     intro = False
-                
-        screen.fill((255,255,255))
-        text_size=115
-        draw_text(screen, "Fischsuppe", text_size, (50,50,150), screen.get_size()[0]/4+40, screen.get_size()[1]/3)
-        draw_text(screen, "hit SPACE to play", 50, (50,50,150), screen.get_size()[0]/3+80, screen.get_size()[1]/2)
-        pygame.display.flip()
     
     draw_text(screen, "Loading...", 50, (50,50,150), screen.get_size()[0]/2, screen.get_size()[1]*3/4)
     pygame.display.flip()

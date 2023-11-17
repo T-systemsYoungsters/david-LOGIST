@@ -8,7 +8,7 @@ Final Lab on http://programarcadegames.com/
 Graphics from https://www.gamedeveloperstudio.com
 
 Implement next time:  player radius,können sich untereinander fressen,
- no radius at map border, show_window as seperate function, put Window in sprite.Group()
+ no radius at map border, show_window as seperate function, put Window in sprite.Group(), difficulty
 """
  
 import pygame, random
@@ -18,7 +18,7 @@ from enemies import *
 from menu import *
  
 
-def main():
+def main(skip_intro=False):
     """ Main function for the game. """
     pygame.init() #initiate pygame Module
     instructions() #Write instrucions into Console
@@ -50,13 +50,14 @@ def main():
     player_size=50
     player=Player((SCREEN_WIDTH, SCREEN_HEIGHT), player_radius, player_size)
     speed_original=10 # Original speed to reset after dash
-    speed=10 #Player movement speed
+    speed=8 #Player movement speed
     score=0
     difficulty = 4 #Quantity of Enemies multiplied by factor
     numberofenemies=0 #Quantity of all Enemies for End of Game
     cooldown_hurt = 0 
     cooldown_killstreak = 0
     killstreak_text_cooldown=0
+    player_growth_rate=3 #player growth after kill in pixel
     # For Killstreak, random.choice out of following options:
     streaklist=["Munch Munch", "Pop", "sizzle", "crunch", "slurp", "munch", "gulp", "rustle"]
     sound=True # if True, the game starts with sound enabled, 
@@ -80,7 +81,7 @@ def main():
     
 
     """Show Game Intro and Loading animation""" #from menu.game_intro()
-    game_intro(screen)
+    game_intro(screen, skip_intro)
     
     #add backround to sprite-group, so it is drawn first
     #initiate 4 types of enemies and append to sprite-group
@@ -220,7 +221,7 @@ def main():
                 print(numberofenemies)
                 all_sprites_list.remove(i)
                 enemy_sprites_list.remove(i)
-                player_size+=5
+                player_size+=player_growth_rate
                 player.changesize(player_size)
 
                 # bonus score for Killstreak
@@ -236,6 +237,15 @@ def main():
                         nom_sound.play()
                     cooldown_killstreak = 60 #cooldown 1 second
                     current_streak=random.choice(streaklist)
+
+        # the pause window has to be drawn AFTER the rest so it is on top
+
+        # show Window when End of Game is reached
+        if numberofenemies == 0:
+            if sound == True:
+                game_won_sound.play(score)
+            show_window=True
+            menu_window.won=True
         
         # END of GAME LOGIC ----------------------------------------------
 
@@ -265,15 +275,7 @@ def main():
         # END of DRAW on SCREEN ---------------------
 
         # START of GAME LOGIC #2 ---------------------------------------
-        # the pause window has to be drawn AFTER the rest so it is on top
-
-        # show Window when End of Game is reached
-        if numberofenemies == 0:
-            if sound == True:
-                game_won_sound.play(score)
-            show_window=True
-            menu_window.won=True
-
+        
         """START of PAUSE loop---------------------------------------"""
         # This way, the game stays frozen
         while show_window == True:
@@ -286,7 +288,7 @@ def main():
             if menu_window.restart==True:
                 print("Restart")
                 pygame.quit()
-                main()
+                restart()
                 break
             pygame.display.flip()
         """END of PAUSE loop ---------------------------------------------"""
@@ -300,6 +302,10 @@ def main():
     # Close the window and quit IDE friendly
     pygame.quit()
     print("goodbye.")
+
+#Restart main loop with skipping of key promt
+def restart():
+    main(True)
 
 # Run main loop if Program is run
 if __name__ == "__main__":
