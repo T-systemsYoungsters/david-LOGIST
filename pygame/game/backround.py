@@ -30,7 +30,6 @@ class Backround(pygame.sprite.Sprite):
         self.change_x = 0
         self.change_y = 0
 
-
     def changespeed(self, x, y):
         self.change_x += x
         self.change_y += y

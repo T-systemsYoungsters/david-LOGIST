@@ -7,8 +7,7 @@ Final Lab on http://programarcadegames.com/
 
 Graphics from https://www.gamedeveloperstudio.com
 
-Implement next time:  player radius,können sich untereinander fressen,
- no radius at map border, show_window as seperate function, put Window in sprite.Group(), difficulty
+Implement next time: put Window in sprite.Group(), set DIFFICULTY
 """
  
 import pygame, random
@@ -44,20 +43,21 @@ def main(skip_intro=False):
 
     #initiate the player
     # use of Class player.Player()
+    #set game Constants
     #Initiate Game variables
     #Import Sound files
-    player_radius=200
+    PLAYER_RADIUS=200
     player_size=50
-    player=Player((SCREEN_WIDTH, SCREEN_HEIGHT), player_radius, player_size)
-    speed_original=10 # Original speed to reset after dash
+    player=Player((SCREEN_WIDTH, SCREEN_HEIGHT), PLAYER_RADIUS, player_size)
+    SPEED_ORIGINAL=10 # Original speed to reset after dash
     speed=8 #Player movement speed
     score=0
-    difficulty = 4 #Quantity of Enemies multiplied by factor
+    DIFFICULTY = 4 #Quantity of Enemies multiplied by factor
     numberofenemies=0 #Quantity of all Enemies for End of Game
     cooldown_hurt = 0 
     cooldown_killstreak = 0
     killstreak_text_cooldown=0
-    player_growth_rate=3 #player growth after kill in pixel
+    PLAYER_GROWTH_RATE=4 #player growth after kill in pixel
     # For Killstreak, random.choice out of following options:
     streaklist=["Munch Munch", "Pop", "sizzle", "crunch", "slurp", "munch", "gulp", "rustle"]
     sound=True # if True, the game starts with sound enabled, 
@@ -73,7 +73,7 @@ def main(skip_intro=False):
     #initiate the backround from class backround.Backround()
     #initiate Menu window as a sprite from menu.Window()
     # x and y pos for screen offset
-    backround = Backround("assets/pool.jpeg",SCREEN_WIDTH,SCREEN_HEIGHT, MAP_WIDTH, MAP_HEIGHT, player_radius)
+    backround = Backround("assets/pool.jpeg",SCREEN_WIDTH,SCREEN_HEIGHT, MAP_WIDTH, MAP_HEIGHT, PLAYER_RADIUS)
     menu_window = Window()
     window_xpos=420
     window_ypos=200
@@ -86,11 +86,11 @@ def main(skip_intro=False):
     #add backround to sprite-group, so it is drawn first
     #initiate 4 types of enemies and append to sprite-group
     # enemies' classes from enemy.py
-    # Quantity of enemies depended on difficulty
+    # Quantity of enemies depended on DIFFICULTY
     #(This takes some time, before the game can start)
     all_sprites_list.add(backround)
 
-    for i in range(difficulty*4): #Starfish
+    for i in range(DIFFICULTY*4): #Starfish
         numberofenemies+=1
         x= random.randrange(MAP_WIDTH)
         y= random.randrange(MAP_HEIGHT)
@@ -98,7 +98,7 @@ def main(skip_intro=False):
         enemy_sprites_list.add(star)
         all_sprites_list.add(star)
 
-    for i in range(difficulty*4): #Normal Fish
+    for i in range(DIFFICULTY*4): #Normal Fish
         numberofenemies+=1
         x= random.randrange(MAP_WIDTH)
         y= random.randrange(MAP_HEIGHT)
@@ -106,7 +106,7 @@ def main(skip_intro=False):
         enemy_sprites_list.add(fish)
         all_sprites_list.add(fish)
     
-    for i in range(difficulty*2): #Crabs
+    for i in range(DIFFICULTY*2): #Crabs
         numberofenemies+=1
         x= random.randrange(MAP_WIDTH)
         y= random.randrange(MAP_HEIGHT//2,MAP_HEIGHT-200)
@@ -114,7 +114,7 @@ def main(skip_intro=False):
         enemy_sprites_list.add(crab)
         all_sprites_list.add(crab)
 
-    for i in range(difficulty): # Jellyfish
+    for i in range(DIFFICULTY): # Jellyfish
         numberofenemies+=1
         x= random.randrange(MAP_WIDTH)
         y= random.randrange(MAP_HEIGHT)
@@ -166,21 +166,32 @@ def main(skip_intro=False):
  
         # Start of GAME LOGIC ----------------------------------
 
-
-        '''limit movement to center'''#make border round
-        if player.rect.x < (player.x-player.radius):
+        '''limit movement to screen'''
+        if player.rect.x < 0:
+            player.rect.x=0
+        if player.rect.x > SCREEN_WIDTH-player_size:
+            player.rect.x=SCREEN_WIDTH-player_size
+        if player.rect.y < 0:
+            player.rect.y=0
+        if player.rect.y > SCREEN_HEIGHT-player_size:
+            player.rect.y=SCREEN_HEIGHT-player_size
+        '''limit movement to box in center and move bg'''
+        #move like normal if map border is reached tho
+        if player.rect.x < (player.x-player.radius) and backround.rect.x !=0:
             player.rect.x=player.x-player.radius
             backround.change_x=speed
         if player.rect.x > (player.x+player.radius-player_size):
-            player.rect.x=player.x+player.radius-player_size
-            backround.change_x=-speed
-        if player.rect.y < (player.y-player.radius):
+            if backround.rect.x != -MAP_WIDTH + SCREEN_WIDTH:
+                player.rect.x=player.x+player.radius-player_size
+                backround.change_x=-speed
+        if player.rect.y < (player.y-player.radius) and backround.rect.y !=0:
             player.rect.y=player.y-player.radius
             backround.change_y=speed
         if player.rect.y > (player.y+player.radius-player_size):
-            player.rect.y=player.y+player.radius-player_size
-            backround.change_y=-speed
-        
+            if backround.rect.y != -MAP_HEIGHT + SCREEN_HEIGHT:
+                player.rect.y=player.y+player.radius-player_size
+                backround.change_y=-speed
+            
         for i in enemy_sprites_list: #go through every enemy sprite
             # draw the enemies in dependence of the screen offset
             i.rect.x = i.xpos + backround.rect.x
@@ -216,12 +227,12 @@ def main(skip_intro=False):
                 print("Ouch")
                 score-=500
                 print("Score :", score)
-            elif player_hit and player.size > i.size:
+            elif player_hit and player.size[0] - i.size[0] > 10:
                 numberofenemies-=1
                 print(numberofenemies)
                 all_sprites_list.remove(i)
                 enemy_sprites_list.remove(i)
-                player_size+=player_growth_rate
+                player_size+=PLAYER_GROWTH_RATE
                 player.changesize(player_size)
 
                 # bonus score for Killstreak
@@ -269,8 +280,8 @@ def main(skip_intro=False):
             cooldown_hurt -=1
         if cooldown_killstreak != 0:
             cooldown_killstreak -=1
-        if speed != speed_original:
-            speed = speed_original
+        if speed != SPEED_ORIGINAL:
+            speed = SPEED_ORIGINAL
             
         # END of DRAW on SCREEN ---------------------
 
