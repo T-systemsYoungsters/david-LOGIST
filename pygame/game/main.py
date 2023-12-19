@@ -7,7 +7,7 @@ Final Lab on http://programarcadegames.com/
 
 Graphics from https://www.gamedeveloperstudio.com
 
-Implement next time: put Window in sprite.Group(), set DIFFICULTY
+Implement next time: put Window in sprite.Group(), set DIFFICULTY, playsound(), datentypen
 """
  
 import pygame, random
@@ -26,8 +26,8 @@ def main(skip_intro=False):
     # Set the height and width of the screen
     # Define Map size
     # initiate Winodw
-    SCREEN_WIDTH = 1200
-    SCREEN_HEIGHT = 800
+    SCREEN_WIDTH:int = 1200
+    SCREEN_HEIGHT:int = 800
     MAP_WIDTH = 2000
     MAP_HEIGHT = 2000
     screen = pygame.display.set_mode([SCREEN_WIDTH,  SCREEN_HEIGHT])

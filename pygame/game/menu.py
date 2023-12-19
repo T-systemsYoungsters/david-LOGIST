@@ -1,6 +1,6 @@
 import pygame
 from backround import * #for drawtext function
-import main #for restarting option
+from highscore import Highscores
 
 def instructions():
     print('''
@@ -46,23 +46,6 @@ def game_intro(screen, skip=False):
     draw_text(screen, "Loading...", 50, (50,50,150), screen.get_size()[0]/2, screen.get_size()[1]*3/4)
     pygame.display.flip()
 
-def check_highscore(score):
-    #function that updates the highscore in highscore.txt
-    # return True if new Highscore was set 
-    new_highscore = False
-    file = open("highscore.txt","r")
-    old_highscore= int(file.read())
-
-    if score > old_highscore:
-        file=open("highscore.txt","w")
-        newText=str(score)
-        file.write(newText)
-        file.close()
-        new_highscore = True
-        print("New Highscore!")
-
-    return new_highscore
-
 class Window(pygame.sprite.Sprite):
     def __init__(self, window_width = 400, window_height = 400):
         """Constructor function"""
@@ -71,13 +54,16 @@ class Window(pygame.sprite.Sprite):
         self.width = window_width
         self.height = window_height
         self.won=False
-        self.new_highscore=False
+        self.updatedHighscore=False
         self.sound=True
         self.sfx=True
         self.ispaused=False
         self.restart=False
         self.sound_image=pygame.image.load("assets/sound.png")
         self.sound_image=pygame.transform.scale(self.sound_image, (50,50))
+        # load highscores by initiating Highscores class
+        self.highscores=Highscores("highscores.json")
+        self.updated_highscore= False
         #Put window in the middle of the screen
         self.image = pygame.Surface((self.width, self.height))
         pygame.rect = self.image.get_rect()
@@ -110,20 +96,27 @@ class Window(pygame.sprite.Sprite):
             draw_text(self.image, "YOU WON!", 50, (80,80,150), 100,20)
             pygame.draw.line(self.image, (80,80,150), (100,80), (320,80),4)
             draw_text(self.image, "Score: "+str(score), 30, (80,80,150), 20,100)
-
+            if self.updated_highscore==False:
+                self.highscores.new_score(score) #append new score to Board ONCE
+                self.updated_highscore = True
+                self.highscores.update()
             # Draw Restart Button
             draw_text(self.image, "RESTART", 50, (80,80,180), 110, 320)
             pygame.draw.rect(self.image, (200,200,200),(100, 320, 200,60), 5)
+            
+            # Draw Highscores
+            draw_text(self.image, "Highscores:", 30, (80,80,150), 120,140)
+            for i in range(0,4):
+                line= "{:<7}:{:>6}".format(self.highscores.highscore_list[i][1], self.highscores.highscore_list[i][0])
+                draw_text(self.image, line, 30, (80,80,150), 70,173+30*i, font="monospace")
 
             # Show current Highscore or New Highscore! message
-            if check_highscore(score) == True:
-                self.new_highscore = True
-            if self.new_highscore == True:
-                draw_text(self.image, "NEW HIGHSCORE!", 30, (80,80,150), 20,150)
-            else:
-                file = open("highscore.txt","r")
-                highscore= file.read()
-                draw_text(self.image, "Highscore: " + str(highscore), 30, (80,80,150), 20,130)
+            if self.updated_highscore == False:
+                if self.highscores.new_score(score):
+                    draw_text(self.image, "NEW HIGHSCORE!", 20, (80,80,150), 20, 130)
+                    self.updated_highscore= True
+            
+            
         else:
             draw_text(self.image, "PAUSE", 50, (80,80,150), 130,20)
             pygame.draw.line(self.image, (80,80,150), (120,80), (280,80),4)

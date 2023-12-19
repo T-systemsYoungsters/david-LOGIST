@@ -1,8 +1,8 @@
 import pygame
 
-def draw_text(screen,text, size, col, x, y):
+def draw_text(screen,text, size, col, x, y, font = "arial"):
         """Draw Text on the screen"""
-        font_name = pygame.font.match_font('arial')
+        font_name = pygame.font.match_font(font)
         font = pygame.font.Font(font_name, size)
         text_surface = font.render(text, True, col)
         text_rect = text_surface.get_rect()
