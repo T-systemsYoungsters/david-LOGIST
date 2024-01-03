@@ -53,7 +53,7 @@ class Window(pygame.sprite.Sprite):
         super().__init__()
         self.width = window_width
         self.height = window_height
-        self.won=True
+        self.won=False
         self.sound=True
         self.sfx=False
         self.ispaused=False
