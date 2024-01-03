@@ -53,17 +53,19 @@ class Window(pygame.sprite.Sprite):
         super().__init__()
         self.width = window_width
         self.height = window_height
-        self.won=False
-        self.updatedHighscore=False
+        self.won=True
         self.sound=True
-        self.sfx=True
+        self.sfx=False
         self.ispaused=False
         self.restart=False
         self.sound_image=pygame.image.load("assets/sound.png")
         self.sound_image=pygame.transform.scale(self.sound_image, (50,50))
         # load highscores by initiating Highscores class
         self.highscores=Highscores("highscores.json")
-        self.updated_highscore= False
+        self.update_highscore=False
+        #Displays Name when entered with prompt
+        self.playername=""
+        self.input_blink_timer=60
         #Put window in the middle of the screen
         self.image = pygame.Surface((self.width, self.height))
         pygame.rect = self.image.get_rect()
@@ -96,28 +98,33 @@ class Window(pygame.sprite.Sprite):
             draw_text(self.image, "YOU WON!", 50, (80,80,150), 100,20)
             pygame.draw.line(self.image, (80,80,150), (100,80), (320,80),4)
             draw_text(self.image, "Score: "+str(score), 30, (80,80,150), 20,100)
-            if self.updated_highscore==False:
-                self.highscores.new_score(score) #append new score to Board ONCE
-                self.updated_highscore = True
-                self.highscores.update()
+
             # Draw Restart Button
             draw_text(self.image, "RESTART", 50, (80,80,180), 110, 320)
             pygame.draw.rect(self.image, (200,200,200),(100, 320, 200,60), 5)
+
+            if self.update_highscore == False and self.highscores.checkhighscore(score) == True:
+                if self.playername!="SAFED!":
+                    self.update_highscore= True
             
+            if self.update_highscore == True:
+                draw_text(self.image, "NEW HIGHSCORE! Hit Enter to safe.", 13, (0,0,0), 80, 130)
+                draw_text(self.image, self.playername, 30, (0,0,0), 180, 90)
+                if self.input_blink_timer < 60: #every second, show/dont show promt
+                    draw_text(self.image, "_", 30, (0,0,0), 180+len(self.playername)*15, 90, font="monospace")
+                if self.input_blink_timer == 0:
+                    self.input_blink_timer = 120 #duration for blink
+                self.input_blink_timer-=1 #change every frame
+
+
             # Draw Highscores
             draw_text(self.image, "Highscores:", 30, (80,80,150), 120,140)
             for i in range(0,4):
                 line= "{:<7}:{:>6}".format(self.highscores.highscore_list[i][1], self.highscores.highscore_list[i][0])
                 draw_text(self.image, line, 30, (80,80,150), 70,173+30*i, font="monospace")
-
-            # Show current Highscore or New Highscore! message
-            if self.updated_highscore == False:
-                if self.highscores.new_score(score):
-                    draw_text(self.image, "NEW HIGHSCORE!", 20, (80,80,150), 20, 130)
-                    self.updated_highscore= True
-            
             
         else:
+            # Draw Pause Button
             draw_text(self.image, "PAUSE", 50, (80,80,150), 130,20)
             pygame.draw.line(self.image, (80,80,150), (120,80), (280,80),4)
 
@@ -137,6 +144,20 @@ class Window(pygame.sprite.Sprite):
                 if event.key == pygame.K_ESCAPE:
                 # Show pause Window when ESC
                     self.ispaused = False
+                elif event.key == pygame.K_RETURN and self.update_highscore==True:
+                    #Check if highscore was updated before and Check if score is new highscore
+                    if self.playername =="":
+                        self.playername ="PLAYER"
+                    self.highscores.new_score(score, self.playername) #append new score to Board ONCE
+                    self.highscores.update() #Update json
+                    self.playername ="SAFED!"
+                    self.update_highscore=False
+                elif event.key == pygame.K_BACKSPACE and self.update_highscore==True and len(self.playername)>0:
+                    self.playername= self.playername[:-1]
+                    print(self.playername)
+                #allow user to set highscore name up to 7 characters
+                elif self.update_highscore==True and len(self.playername) <=6:
+                    self.playername=self.playername+chr(event.key).upper()
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if pygame.mouse.get_pos()[0] > window_xpos+100 and pygame.mouse.get_pos()[0] < window_xpos+300:
                 # RESUME or RESTART
@@ -167,4 +188,4 @@ class Window(pygame.sprite.Sprite):
                         elif self.sfx == False:
                             self.sfx=True
                             print("Special Effects ON")
-                            self.update(score) 
+                            self.update(score)

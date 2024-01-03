@@ -229,7 +229,7 @@ def main(skip_intro=False):
                 print("Score :", score)
             elif player_hit and player.size[0] - i.size[0] > 10:
                 numberofenemies-=1
-                print(numberofenemies)
+                print("Enemys left : ", numberofenemies)
                 all_sprites_list.remove(i)
                 enemy_sprites_list.remove(i)
                 player_size+=PLAYER_GROWTH_RATE
@@ -246,7 +246,7 @@ def main(skip_intro=False):
                     score+=100 + i.size[0]*4
                     if sound == True:
                         nom_sound.play()
-                    cooldown_killstreak = 60 #cooldown 1 second
+                    cooldown_killstreak = 30 #cooldown 1/2 second
                     current_streak=random.choice(streaklist)
 
         # the pause window has to be drawn AFTER the rest so it is on top
