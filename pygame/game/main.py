@@ -250,7 +250,7 @@ def main(skip_intro=False):
                     current_streak=random.choice(streaklist)
 
         # the pause window has to be drawn AFTER the rest so it is on top
-
+        
         # show Window when End of Game is reached
         if numberofenemies == 0:
             if sound == True:
@@ -321,3 +321,4 @@ def restart():
 # Run main loop if Program is run
 if __name__ == "__main__":
     main()
+

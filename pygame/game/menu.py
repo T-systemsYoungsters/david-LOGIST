@@ -62,7 +62,7 @@ class Window(pygame.sprite.Sprite):
         self.sound_image=pygame.transform.scale(self.sound_image, (50,50))
         # load highscores by initiating Highscores class
         self.highscores=Highscores("highscores.json")
-        self.update_highscore=False
+        self.update_highscore=True
         #Displays Name when entered with prompt
         self.playername=""
         self.input_blink_timer=60
@@ -154,9 +154,8 @@ class Window(pygame.sprite.Sprite):
                     self.update_highscore=False
                 elif event.key == pygame.K_BACKSPACE and self.update_highscore==True and len(self.playername)>0:
                     self.playername= self.playername[:-1]
-                    print(self.playername)
                 #allow user to set highscore name up to 7 characters
-                elif self.update_highscore==True and len(self.playername) <=6:
+                elif self.update_highscore==True and len(self.playername) <=6 and event.key != pygame.K_LSHIFT:
                     self.playername=self.playername+chr(event.key).upper()
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if pygame.mouse.get_pos()[0] > window_xpos+100 and pygame.mouse.get_pos()[0] < window_xpos+300:

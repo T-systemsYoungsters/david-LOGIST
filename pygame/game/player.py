@@ -15,7 +15,7 @@ class Player(pygame.sprite.Sprite):
         self.screen_size=screen_size
         self.radius=radius
         self.size=(pixel_size,pixel_size)
-        self.last_direction=(0,0)
+        self.last_direction=(1,0)
 
         self.image = pygame.Surface(self.size)
 
